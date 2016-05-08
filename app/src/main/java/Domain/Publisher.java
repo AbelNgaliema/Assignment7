@@ -34,8 +34,8 @@ public class Publisher implements PublisherInterface, Serializable {
         String registrationNumber;
 
 
-        public Builder(String value){
-            this.name = value;
+        public Builder(){
+
 
         }
         public Builder city(String value){
@@ -45,6 +45,12 @@ public class Publisher implements PublisherInterface, Serializable {
 
         public Builder registration(String value){
             this.registrationNumber = value;
+            return this;
+        }
+
+        public Builder name(String value)
+        {
+            this.name = value;
             return this;
         }
         public Publisher build(){

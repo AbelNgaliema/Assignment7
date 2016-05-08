@@ -41,7 +41,7 @@ public class TestBuyRepo extends AndroidTestCase {
         Map<String,String> values = new HashMap<String,String>();
         values.put("name","Boniface");
         values.put("surname", "Kabaso");
-        Author author = AuthorFactory.createAuthor(1,values);
+        Author author = AuthorFactory.createAuthor(values);
 
         //Publisher created
 

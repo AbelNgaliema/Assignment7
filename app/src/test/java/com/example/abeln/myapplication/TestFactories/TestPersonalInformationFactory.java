@@ -45,7 +45,7 @@ public class TestPersonalInformationFactory extends TestCase {
 
         PersonalInformation personalInformation = PersonalInformationFactory.createPersonalInformation(values,02100000, 0210000000);
 
-        PersonalInformation personalInformationCopy = new PersonalInformation.Builder(personalInformation.getIdNumber()).
+        PersonalInformation personalInformationCopy = new PersonalInformation.Builder().
                 copy(personalInformation).name("Othniel").build();
 
         assertEquals("Othniel", personalInformationCopy.getName());

@@ -45,7 +45,7 @@ public class TestPublisherFactory extends TestCase {
 
         Publisher publisher = PublisherFactory.createPublisher(values);
 
-        Publisher newPublisher = new Publisher.Builder(values.get("name")).copy(publisher).city("JHB").build();
+        Publisher newPublisher = new Publisher.Builder().copy(publisher).city("JHB").build();
         assertEquals("SkyRock", newPublisher.getName());
         assertEquals("JHB", newPublisher.getCity());
         assertEquals("c123idfr", newPublisher.getRegistration());

@@ -7,6 +7,6 @@ public interface  AuthorInterface {
 
     String getName();
     String getSurname();
-    long getId();
+
 
 }

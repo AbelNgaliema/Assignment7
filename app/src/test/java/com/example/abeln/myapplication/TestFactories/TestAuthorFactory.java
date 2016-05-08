@@ -22,11 +22,11 @@ public class TestAuthorFactory extends TestCase {
         Map<String,String> values = new HashMap<String,String>();
         values.put("name","Boniface");
         values.put("surname", "Kabaso");
-        Author author = AuthorFactory.createAuthor(1, values);
+        Author author = AuthorFactory.createAuthor(values);
 
         assertEquals("Boniface", author.getName());
         assertEquals("Kabaso", author.getSurname());
-        assertEquals(1, author.getId());
+
 
 
     }
@@ -36,13 +36,13 @@ public class TestAuthorFactory extends TestCase {
         Map<String,String> values = new HashMap<String,String>();
         values.put("name","Hillary");
         values.put("", "Clinton");
-        Author author = AuthorFactory.createAuthor(1, values);
+        Author author = AuthorFactory.createAuthor(values);
 
-        Author newAuthor = new Author.Builder(author.getId()).copy(author).surname("Golderbasehv").build();
+        Author newAuthor = new Author.Builder().copy(author).surname("Golderbasehv").build();
 
         Assert.assertEquals("Hillary", newAuthor.getName());
         Assert.assertEquals("Golderbasehv", newAuthor.getSurname());
-        assertEquals(1, newAuthor.getId());
+
     }
 
 }

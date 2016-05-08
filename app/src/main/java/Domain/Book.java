@@ -44,6 +44,8 @@ public class Book implements BookInterface, Serializable {
         return publisher;
     }
 
+
+
     @Override
     public long getId() {
         return  id;
@@ -109,6 +111,9 @@ public class Book implements BookInterface, Serializable {
             this.author = object;
             return this;
         }
+
+
+
         public Builder title(String value)
         {
             this.title = value;

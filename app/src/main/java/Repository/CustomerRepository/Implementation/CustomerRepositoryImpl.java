@@ -13,6 +13,8 @@ import java.util.Set;
 
 import Config.DBConstants;
 import Domain.Customer;
+import Domain.CustomerAddress;
+import Domain.PersonalInformation;
 import Repository.CustomerRepository.CustomerRepository;
 
 /**
@@ -24,8 +26,19 @@ public class CustomerRepositoryImpl extends SQLiteOpenHelper implements Customer
     private SQLiteDatabase db;
 
     public static final String COLUMN_ID = "id";
-    public static final String COLUMN_CUSTOMERADDRESS = "customeraddress";
-    public static final String COLUMN_PERSONALINFORMATION ="personalInformation";
+    public static final String COLUMN_CITY = "city";
+    public static final String COLUMN_POSTALCODE = "postalCode";
+    public static final String COLUMN_ADDRESS = "address";
+    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_SURNAME = "surname";
+    public static final String COLUMN_IDNUMBER = "id_number";
+    public static final String COLUMN_EMAIL = "email";
+    public static final String COLUMN_CELLPHONENUMBER= "cellphone";
+    public static final String COLUMN_TELEPHONENUMBER= "telephone";
+
+
+
+
 
 
 
@@ -41,10 +54,18 @@ public class CustomerRepositoryImpl extends SQLiteOpenHelper implements Customer
         this.close();
     }
 
+
     private static final String DATABASE_CREATE = " CREATE TABLE "
             + TABLE_NAME + "("
-            + COLUMN_CUSTOMERADDRESS + " NONE NOT NULL, "
-            + COLUMN_PERSONALINFORMATION + " NONE NOT NULL , "
+            + COLUMN_CITY + " TEXT NOT NULL, "
+            + COLUMN_POSTALCODE + " TEXT NOT NULL , "
+            + COLUMN_ADDRESS + " TEXT NOT NULL , "
+            + COLUMN_NAME + " TEXT NOT NULL , "
+            + COLUMN_SURNAME + " TEXT NOT NULL , "
+            + COLUMN_IDNUMBER + " TEXT NOT NULL , "
+            + COLUMN_EMAIL + " TEXT NULL , "
+            + COLUMN_CELLPHONENUMBER + " TEXT NULL , "
+            + COLUMN_TELEPHONENUMBER + " TEXT NULL , "
             + COLUMN_ID + " INTEGER  PRIMARY KEY AUTOINCREMENT);";
 
 
@@ -62,13 +83,21 @@ public class CustomerRepositoryImpl extends SQLiteOpenHelper implements Customer
     @Override
     public Customer findById(Long id) {
 
+
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(
                 TABLE_NAME,
                 new String[]{
                         COLUMN_ID,
-                        COLUMN_PERSONALINFORMATION,
-                        COLUMN_CUSTOMERADDRESS
+                        COLUMN_CITY,
+                        COLUMN_POSTALCODE,
+                        COLUMN_ADDRESS,
+                        COLUMN_NAME,
+                        COLUMN_SURNAME,
+                        COLUMN_IDNUMBER,
+                        COLUMN_EMAIL,
+                        COLUMN_CELLPHONENUMBER,
+                        COLUMN_TELEPHONENUMBER
                         ,},
                 COLUMN_ID + " =? ",
                 new String[]{String.valueOf(id)},
@@ -77,7 +106,23 @@ public class CustomerRepositoryImpl extends SQLiteOpenHelper implements Customer
                 null,
                 null);
         if (cursor.moveToFirst()) {
+
+            final CustomerAddress customerAddress = new CustomerAddress.Builder()
+                    .address(cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS)))
+                    .city(cursor.getString(cursor.getColumnIndex(COLUMN_CITY)))
+                    .postalCode((int)cursor.getColumnIndex(COLUMN_POSTALCODE))
+                    .build();
+
+            final PersonalInformation personalInformation = new PersonalInformation.Builder().idNumber(cursor.getString(cursor.getColumnIndex(COLUMN_IDNUMBER)))
+                    .cellphone((int) cursor.getColumnIndex(COLUMN_CELLPHONENUMBER))
+                    .name(cursor.getString(cursor.getColumnIndex(COLUMN_NAME)))
+                    .surname(cursor.getString(cursor.getColumnIndex(COLUMN_SURNAME)))
+                    .email(cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL)))
+                    .telephone((int) cursor.getColumnIndex(COLUMN_TELEPHONENUMBER))
+                    .build();
             final Customer customer = new Customer.Builder().id(cursor.getLong((cursor.getColumnIndex(COLUMN_ID))))
+                    .CustomerAddress(customerAddress)
+                    .PersonalInformation(personalInformation)
                     .build();
 
             return customer;
@@ -92,8 +137,17 @@ public class CustomerRepositoryImpl extends SQLiteOpenHelper implements Customer
         open();
         ContentValues values = new ContentValues();
         values.put(COLUMN_ID, entity.getId());
-        values.put(COLUMN_CUSTOMERADDRESS, String.valueOf(entity.getCustomerAddress()));
-        values.put(COLUMN_PERSONALINFORMATION, String.valueOf(entity.getPersonalInformation()));
+        values.put(COLUMN_ADDRESS, entity.getCustomerAddress().getAddress());
+        values.put(COLUMN_NAME, entity.getPersonalInformation().getName());
+        values.put(COLUMN_SURNAME, entity.getPersonalInformation().getSutname());
+        values.put(COLUMN_IDNUMBER, entity.getPersonalInformation().getIdNumber());
+        values.put(COLUMN_CELLPHONENUMBER, entity.getPersonalInformation().getCellnumber());
+        values.put(COLUMN_TELEPHONENUMBER, entity.getPersonalInformation().getTelephone());
+        values.put(COLUMN_EMAIL, entity.getPersonalInformation().getEmailAddress());
+        values.put(COLUMN_CITY, entity.getCustomerAddress().getCity());
+        values.put(COLUMN_POSTALCODE, entity.getCustomerAddress().getPostalCode());
+
+
         long id = db.insertOrThrow(TABLE_NAME, null, values);
         Customer insertedEntity = new Customer.Builder()
                 .id(new Long(id))
@@ -108,9 +162,17 @@ public class CustomerRepositoryImpl extends SQLiteOpenHelper implements Customer
     public Customer update(Customer entity) {
         open();
         ContentValues values = new ContentValues();
+
         values.put(COLUMN_ID, entity.getId());
-        values.put(COLUMN_CUSTOMERADDRESS, String.valueOf(entity.getCustomerAddress()));
-        values.put(COLUMN_PERSONALINFORMATION, String.valueOf(entity.getPersonalInformation()));
+        values.put(COLUMN_ADDRESS, entity.getCustomerAddress().getAddress());
+        values.put(COLUMN_NAME, entity.getPersonalInformation().getName());
+        values.put(COLUMN_SURNAME, entity.getPersonalInformation().getSutname());
+        values.put(COLUMN_IDNUMBER, entity.getPersonalInformation().getIdNumber());
+        values.put(COLUMN_CELLPHONENUMBER, entity.getPersonalInformation().getCellnumber());
+        values.put(COLUMN_TELEPHONENUMBER, entity.getPersonalInformation().getTelephone());
+        values.put(COLUMN_EMAIL, entity.getPersonalInformation().getEmailAddress());
+        values.put(COLUMN_CITY, entity.getCustomerAddress().getCity());
+        values.put(COLUMN_POSTALCODE, entity.getCustomerAddress().getPostalCode());
         db.update(
                 TABLE_NAME,
                 values,
@@ -140,8 +202,22 @@ public class CustomerRepositoryImpl extends SQLiteOpenHelper implements Customer
         Cursor cursor = db.query(TABLE_NAME, null,null,null,null,null,null);
         if (cursor.moveToFirst()) {
             do {
-                final Customer customer = new Customer.Builder()
-                        .id(cursor.getColumnIndex(COLUMN_ID))
+                final CustomerAddress customerAddress = new CustomerAddress.Builder()
+                        .address(cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS)))
+                        .city(cursor.getString(cursor.getColumnIndex(COLUMN_CITY)))
+                        .postalCode((int)cursor.getColumnIndex(COLUMN_POSTALCODE))
+                        .build();
+
+                final PersonalInformation personalInformation = new PersonalInformation.Builder().idNumber(cursor.getString(cursor.getColumnIndex(COLUMN_IDNUMBER)))
+                        .cellphone((int) cursor.getColumnIndex(COLUMN_CELLPHONENUMBER))
+                        .name(cursor.getString(cursor.getColumnIndex(COLUMN_NAME)))
+                        .surname(cursor.getString(cursor.getColumnIndex(COLUMN_SURNAME)))
+                        .email(cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL)))
+                        .telephone((int) cursor.getColumnIndex(COLUMN_TELEPHONENUMBER))
+                        .build();
+                final Customer customer = new Customer.Builder().id(cursor.getLong((cursor.getColumnIndex(COLUMN_ID))))
+                        .CustomerAddress(customerAddress)
+                        .PersonalInformation(personalInformation)
                         .build();
                 customers.add(customer);
             } while (cursor.moveToNext());

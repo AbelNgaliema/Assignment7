@@ -56,9 +56,15 @@ public class PersonalInformation implements Contact, Person,Serializable {
         int cellphone;
         int telephone;
 
-        public Builder(String value)
+        public Builder()
+        {
+
+        }
+
+        public Builder idNumber (String value)
         {
             this.idNumber = value;
+            return this;
         }
 
         public Builder name(String value)

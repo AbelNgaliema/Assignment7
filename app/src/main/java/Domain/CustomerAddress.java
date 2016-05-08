@@ -37,9 +37,15 @@ public class CustomerAddress implements CustomerAddressInterface,Serializable {
         String address;
         int postalCode;
 
-        public Builder(String value)
+        public Builder()
+        {
+
+        }
+
+        public Builder address (String value)
         {
             this.address = value;
+            return this;
         }
         public Builder city(String value)
         {

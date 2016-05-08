@@ -7,7 +7,7 @@ public interface BuyInterface {
 
     String getCashier();
     String getMode();
-    Book getBook();
-    Customer getCustomer();
+    String getBook();
+    String getCustomer();
     long getId();
 }

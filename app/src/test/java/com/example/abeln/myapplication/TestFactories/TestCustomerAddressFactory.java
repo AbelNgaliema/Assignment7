@@ -40,7 +40,7 @@ public class TestCustomerAddressFactory extends TestCase {
 
         CustomerAddress customerAddress = CustomerAddressFactory.createCustomerAddress(values,7800);
 
-        CustomerAddress copyCustomerAddress = new CustomerAddress.Builder(customerAddress.getAddress()).copy(customerAddress).city("JHB").build();
+        CustomerAddress copyCustomerAddress = new CustomerAddress.Builder().copy(customerAddress).city("JHB").build();
 
         assertEquals("58 Victoria Rd. Southfield", copyCustomerAddress.getAddress());
         assertEquals("JHB", copyCustomerAddress.getCity());

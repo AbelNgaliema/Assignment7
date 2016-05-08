@@ -9,7 +9,7 @@ public class Author implements Serializable, AuthorInterface {
 
     private String name;
     private String surname;
-    private long id;
+
 
     public String getName() {
         return this.name;
@@ -19,27 +19,22 @@ public class Author implements Serializable, AuthorInterface {
         return this.surname;
     }
 
-    @Override
-    public long getId() {
-
-        return id;
-    }
 
     public Author (Builder builder)
     {
         this.name = builder.name;
         this.surname = builder.surname;
-        this.id = builder.id;
+
     }
 
     public static class Builder{
 
         private String name;
         private String surname;
-        private long id;
-        public Builder(long value)
+
+        public Builder()
         {
-            this.id = value;
+
         }
         public Builder name(String value){
             this.name = value;
@@ -54,7 +49,7 @@ public class Author implements Serializable, AuthorInterface {
         public Builder copy(Author value){
             this.name = value.name;
             this.surname = value.surname;
-            this.id = value.id;
+
             return this;
         }
 

@@ -10,8 +10,8 @@ public class Buy implements  BuyInterface,Serializable {
 
     private String cashier;
     private String mode;
-    private Book book;
-    private Customer customer;
+    private String book;
+    private String customer;
     private long id;
 
     public String getCashier() {
@@ -22,11 +22,11 @@ public class Buy implements  BuyInterface,Serializable {
         return mode;
     }
 
-    public Book getBook() {
+    public String getBook() {
         return  book;
     }
 
-    public Customer getCustomer() {
+    public String getCustomer() {
         return customer;
     }
 
@@ -50,9 +50,9 @@ public class Buy implements  BuyInterface,Serializable {
 
         String cashier;
         String mode;
-        Book book;
+        String book;
         long id;
-        Customer customer;
+        String customer;
 
         public Builder ()
         {
@@ -72,13 +72,13 @@ public class Buy implements  BuyInterface,Serializable {
             return this;
         }
 
-        public Builder book(Book object)
+        public Builder book(String value)
         {
-            this.book = object;
+            this.book = value;
             return this;
         }
 
-        public Builder customer(Customer customer)
+        public Builder customer(String customer)
         {
             this.customer = customer;
             return this;

@@ -15,6 +15,9 @@ import org.junit.runners.Suite;
         TestCustomerFactory.class,
         TestPersonalInformationFactory.class,
         TestPublisherFactory.class,
+        TestEmployeeFactory.class,
+        TestBranchFactory.class,
+        TestSupplierFactory.class
 
 })
 public class TestSuite {

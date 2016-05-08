@@ -14,7 +14,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import Config.DBConstants;
+import Domain.Author;
 import Domain.Book;
+import Domain.Publisher;
 import Repository.BookRepository.BookRepository;
 
 /**
@@ -25,13 +27,18 @@ public class BookRepositoryImpl extends SQLiteOpenHelper implements BookReposito
     public static final String TABLE_NAME = "book";
     private SQLiteDatabase db;
 
+
+
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_YEAR = "year";
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_QUANTITY = "quantity";
     public static final String COLUMN_PRICE = "price";
-    public static final String COLUMN_AUHTOR = "author";
-    public static final String COLUMN_PUBLISHER = "publisher";
+    public static final String COLUMN_AUHTORNAME = "authorName";
+    public static final String COLUMN_AUHTORSURNAME = "authorSurname";
+    public static final String COLUMN_PUBLISHERNAME= "publisherName";
+    public static final String COLUMN_PUBLISHERCITY = "publisherCity";
+    public static final String COLUMN_PUBLISHERREGISTRATIONNUMBER = "publisherRegistrationNumber";
     public static final String COLUMN_ISBNNUMBER = "isbn";
 
     public void open() throws SQLException {
@@ -46,9 +53,12 @@ public class BookRepositoryImpl extends SQLiteOpenHelper implements BookReposito
             + COLUMN_ID + " INTEGER  PRIMARY KEY AUTOINCREMENT, "
             + COLUMN_YEAR + " INTEGER NOT NULL, "
             + COLUMN_ISBNNUMBER + " TEXT NOT NULL, "
-            + COLUMN_TITLE + " TEXT NOT NULL , "
-            + COLUMN_AUHTOR + " NONE NOT NULL , "
-            + COLUMN_PUBLISHER + " NONE NOT NULL , "
+            + COLUMN_TITLE + " TEXT NOT NULL, "
+            + COLUMN_AUHTORNAME + " TEXT NOT NULL , "
+            + COLUMN_AUHTORSURNAME + " TEXT NOT NULL , "
+            + COLUMN_PUBLISHERCITY + " TEXT NOT NULL , "
+            + COLUMN_PUBLISHERNAME+ " TEXT NOT NULL , "
+            + COLUMN_PUBLISHERREGISTRATIONNUMBER + " TEXT NOT NULL , "
             + COLUMN_QUANTITY + " INTEGER NOT NULL , "
             + COLUMN_PRICE + " REAL NOT NULL);";
 
@@ -77,8 +87,12 @@ public class BookRepositoryImpl extends SQLiteOpenHelper implements BookReposito
                         COLUMN_TITLE,
                         COLUMN_QUANTITY,
                         COLUMN_ISBNNUMBER,
-                        COLUMN_AUHTOR,
-                        COLUMN_PUBLISHER},
+                        COLUMN_PRICE,
+                        COLUMN_AUHTORNAME,
+                        COLUMN_AUHTORSURNAME,
+                        COLUMN_PUBLISHERNAME,
+                        COLUMN_PUBLISHERCITY,
+                        COLUMN_PUBLISHERREGISTRATIONNUMBER},
                 COLUMN_ID + " =? ",
                 new String[]{String.valueOf(id)},
                 null,
@@ -88,10 +102,25 @@ public class BookRepositoryImpl extends SQLiteOpenHelper implements BookReposito
         if (cursor.moveToFirst()) {
 
 
-            final Book book = new Book.Builder().id(cursor.getLong((cursor.getColumnIndex(COLUMN_TITLE)))).
-                    price(cursor.getLong(cursor.getColumnIndex(COLUMN_TITLE)))
+            final Author author = new Author.Builder().name(cursor.
+                    getString(cursor.getColumnIndex(COLUMN_AUHTORNAME)))
+                    .surname(cursor.getString(cursor.getColumnIndex(COLUMN_AUHTORSURNAME)))
+                    .build();
+
+            final Publisher publisher = new Publisher.Builder().
+                    city(cursor.getString(cursor.getColumnIndex(COLUMN_PUBLISHERCITY)))
+                    .registration(cursor.getString(cursor.getColumnIndex(COLUMN_PUBLISHERREGISTRATIONNUMBER)))
+                    .name(cursor.getString(cursor.getColumnIndex(COLUMN_PUBLISHERNAME)))
+                    .build();
+
+
+            final Book book = new Book.Builder().id(cursor.getLong((cursor.getColumnIndex(COLUMN_ID)))).
+                     price(cursor.getLong(cursor.getColumnIndex(COLUMN_PRICE)))
                     .year((int) cursor.getLong(cursor.getColumnIndex(COLUMN_YEAR)))
                     .isbnNumber(cursor.getString(cursor.getColumnIndex(COLUMN_ISBNNUMBER)))
+                    .quantity(cursor.getColumnIndex(COLUMN_QUANTITY))
+                    .publisher(publisher)
+                    .author(author)
                     .title(cursor.getString(cursor.getColumnIndex(COLUMN_TITLE)))
                     .build();
 
@@ -110,9 +139,17 @@ public class BookRepositoryImpl extends SQLiteOpenHelper implements BookReposito
         values.put(COLUMN_YEAR, entity.getYear());
         values.put(COLUMN_TITLE, entity.getTitle());
         values.put(COLUMN_QUANTITY, entity.getQuantity());
-        values.put(COLUMN_AUHTOR, String.valueOf(entity.getAuthor()));
         values.put(COLUMN_ISBNNUMBER, entity.getIsbnNumber());
-        values.put(COLUMN_PUBLISHER, String.valueOf(entity.getAuthor()));
+        values.put(COLUMN_PRICE, entity.getPrice());
+        values.put (COLUMN_AUHTORNAME, entity.getAuthor().getName());
+        values.put (COLUMN_AUHTORSURNAME, entity.getAuthor().getSurname());
+        values.put (COLUMN_PUBLISHERCITY, entity.getPublisher().getCity());
+        values.put (COLUMN_PUBLISHERNAME, entity.getPublisher().getName());
+        values.put (COLUMN_PUBLISHERREGISTRATIONNUMBER, entity.getPublisher().getRegistration());
+
+
+        values.put(COLUMN_ISBNNUMBER, entity.getIsbnNumber());
+
         values.put(COLUMN_PRICE, entity.getPrice());
         long id = db.insertOrThrow(TABLE_NAME, null, values);
         Book insertedEntity = new Book.Builder()
@@ -134,6 +171,11 @@ public class BookRepositoryImpl extends SQLiteOpenHelper implements BookReposito
         values.put(COLUMN_QUANTITY, entity.getQuantity());
         values.put(COLUMN_ISBNNUMBER, entity.getIsbnNumber());
         values.put(COLUMN_PRICE, entity.getPrice());
+        values.put (COLUMN_AUHTORNAME, entity.getAuthor().getName());
+        values.put (COLUMN_AUHTORSURNAME, entity.getAuthor().getSurname());
+        values.put (COLUMN_PUBLISHERCITY, entity.getPublisher().getCity());
+        values.put (COLUMN_PUBLISHERNAME, entity.getPublisher().getName());
+        values.put (COLUMN_PUBLISHERREGISTRATIONNUMBER, entity.getPublisher().getRegistration());
         db.update(
                 TABLE_NAME,
                 values,
@@ -164,13 +206,26 @@ public class BookRepositoryImpl extends SQLiteOpenHelper implements BookReposito
         Cursor cursor = db.query(TABLE_NAME, null,null,null,null,null,null);
         if (cursor.moveToFirst()) {
             do {
-                final Book book = new Book.Builder()
-                        .id(cursor.getColumnIndex(COLUMN_ID))
-                        .year((int)cursor.getColumnIndex(COLUMN_YEAR))
-                        .title(cursor.getString(cursor.getColumnIndex(COLUMN_TITLE)))
-                        .price(cursor.getColumnIndex(COLUMN_PRICE))
+                final Author author = new Author.Builder().name(
+                        cursor.getString(cursor.getColumnIndex(COLUMN_AUHTORNAME)))
+                        .surname(cursor.getString(cursor.getColumnIndex(COLUMN_AUHTORSURNAME)))
+                        .build();
+
+                final Publisher publisher = new Publisher.Builder().
+                        city(cursor.getString(cursor.getColumnIndex(COLUMN_PUBLISHERCITY)))
+                        .registration(cursor.getString(cursor.getColumnIndex(COLUMN_PUBLISHERREGISTRATIONNUMBER)))
+                        .name(cursor.getString(cursor.getColumnIndex(COLUMN_PUBLISHERNAME)))
+                        .build();
+
+
+                final Book book = new Book.Builder().id(cursor.getLong((cursor.getColumnIndex(COLUMN_ID)))).
+                        price(cursor.getLong(cursor.getColumnIndex(COLUMN_PRICE)))
+                        .year((int) cursor.getLong(cursor.getColumnIndex(COLUMN_YEAR)))
                         .isbnNumber(cursor.getString(cursor.getColumnIndex(COLUMN_ISBNNUMBER)))
                         .quantity(cursor.getColumnIndex(COLUMN_QUANTITY))
+                        .publisher(publisher)
+                        .author(author)
+                        .title(cursor.getString(cursor.getColumnIndex(COLUMN_TITLE)))
                         .build();
                 books.add(book);
             } while (cursor.moveToNext());

@@ -11,7 +11,7 @@ public class CustomerAddressFactory {
 
     public static CustomerAddress createCustomerAddress(Map<String,String> value, int postalCode)
     {
-        return  new CustomerAddress.Builder(value.get("address")).city(value.get("city")).postalCode(postalCode).build();
+        return  new CustomerAddress.Builder().address(value.get("address")).city(value.get("city")).postalCode(postalCode).build();
     }
 }
 

@@ -9,7 +9,7 @@ import Domain.Author;
  */
 public class AuthorFactory {
 
-    public static Author createAuthor(long id, Map<String,String> value){
-        return new Author.Builder(id).surname(value.get("surname")).name(value.get("name")).build();
+    public static Author createAuthor(Map<String,String> value){
+        return new Author.Builder().surname(value.get("surname")).name(value.get("name")).build();
     }
 }
