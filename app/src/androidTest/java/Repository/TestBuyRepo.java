@@ -1,4 +1,4 @@
-package Config;
+package Repository;
 
 import android.test.AndroidTestCase;
 
@@ -82,7 +82,7 @@ public class TestBuyRepo extends AndroidTestCase {
         values5.put("cashier","Bingo");
 
         //Buy object
-        Buy buy = BuyFactory.createBuy(1,values5,book,customer);
+        Buy buy = BuyFactory.createBuy(1,values5,book.getTitle(),customer.getPersonalInformation().getName());
         // CREATE
 
         Buy insertedEntity = repo.save(buy);

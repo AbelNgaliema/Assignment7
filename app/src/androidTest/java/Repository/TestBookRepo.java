@@ -1,4 +1,4 @@
-package Config;
+package Repository;
 
 import android.test.AndroidTestCase;
 
